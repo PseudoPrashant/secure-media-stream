@@ -1,0 +1,3 @@
+C:/Users/prash/Desktop/Zenithra assessment/secure-media-stream/receiver/build/CMakeFiles/receiver.dir
+C:/Users/prash/Desktop/Zenithra assessment/secure-media-stream/receiver/build/CMakeFiles/edit_cache.dir
+C:/Users/prash/Desktop/Zenithra assessment/secure-media-stream/receiver/build/CMakeFiles/rebuild_cache.dir

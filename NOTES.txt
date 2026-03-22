@@ -1,0 +1,66 @@
+What is config.py and why does it exist?
+Think of it as the single source of truth for your entire project. Instead of hardcoding values like port numbers or keys inside every file, you define them once here and every other file just imports them. This way if you ever need to change something — like the port number — you change it in one place and it updates everywhere automatically.
+
+
+HOST = "127.0.0.1" # loop back address
+PORT = 9999 #empty port
+
+A loopback address is a special reserved IP address (commonly 127.0.0.1 in IPv4 or ::1 in IPv6) used by a device to send data to itself.
+
+IPv4 uses 32-bit addresses (4.3 billion) and is nearly exhausted, requiring NAT, while IPv6 uses 128-bit addresses (3.4 * 10^38) providing a virtually unlimited space.
+
+Network Address Translation (NAT) is a networking method that maps multiple private IP addresses within a local network to a single public IP address for internet access.
+
+
+ Port 9999 is just an unused port we picked — think of it like a specific door on the computer that our app will communicate through.
+
+
+AES Encryption Key - AES_KEY = b"01234567890123456789012345678901"  # 32 bytes
+This is the secret key used to encrypt and decrypt the media frames. AES-256 requires exactly 32 bytes — that's what the b"" string is.
+
+
+HMAC Key - HMAC_KEY = b"super-secret-hmac-key-for-demo"
+This is a separate secret used to sign each packet.This is different from encryption — encryption hides the data, HMAC proves authenticity.
+HMAC stands for Hash-based Message Authentication Code.
+How it Actually Works
+On the Sender side: HMAC_KEY + packet_data  →  run through SHA256  →  produces a unique signature
+That signature gets attached to the packet before sending.
+On the Receiver side: HMAC_KEY + received_packet_data  →  run through SHA256  →  produces its own signature
+SHA-256 (Secure Hash Algorithm 256-bit) is a mathematical algorithm that takes an input of any size (a word, a file, or even a whole hard drive) and transforms it into a fixed-size "fingerprint" of 64 hexadecimal characters.
+
+
+Transmission Settings - FRAME_COUNT = 10
+                        FRAME_DELAY = 0.5
+FRAME_COUNT controls how many fake video frames the sender will transmit in one session. FRAME_DELAY adds a 0.5 second pause between each frame — this simulates a real camera's frame rate and also makes your demo visually clear to watch in the terminal.
+
+
+Log File - LOG_FILE = "logs/receiver.log"
+Every time the receiver gets a packet, it will write a log entry to this file.
+
+
+****************encryption.py**********************
+it handles all AES-256 GCM encryption and decryption
+AES-256 GCM is widely considered the "gold standard" of modern encryption. While standard AES scrambles data, the GCM (Galois/Counter Mode) version turns it into an all-in-one security suite.
+
+How it works 
+(The 3 Components)To use AES-GCM, you need three specific pieces of information:
+The Key (32 bytes): -           The shared secret between the sender and receiver.
+
+The Nonce (Number used ONCE): - A unique, random 12-byte value.Warning: Never use the same  Nonce twice with the same key. If you do, an attacker can mathematically "cancel out" the encryption and read your data.
+
+The Tag:-                       A 16-byte signature generated during encryption. In the cryptography library you are using, this tag is usually attached to the end of the ciphertext automatically.
+
+
+What this file does in plain terms
+encrypt() function:
+
+Takes the raw frame data and locks it using AES-256 GCM
+Generates a fresh random nonce every single time — this is important because reusing a nonce with the same key would break GCM's security completely
+Returns both the nonce and the ciphertext — the receiver needs both to decrypt
+
+decrypt() function:
+
+Takes the nonce + ciphertext and unlocks it back to original data
+GCM automatically checks integrity here — if anyone tampered with the data in transit, this function will throw an exception and refuse to decrypt. we don't have to write that check manually, GCM does it for us.
+
+

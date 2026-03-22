@@ -1,0 +1,64 @@
+2026-03-22 16:13:24,415 [SENDER] Starting sender — Device ID: CAM_DEVICE_01
+2026-03-22 16:13:24,417 [SENDER] Connecting to receiver at 127.0.0.1:9999...
+2026-03-22 16:13:24,421 [SENDER] Connected to receiver at 127.0.0.1:9999
+2026-03-22 16:13:31,568 [SENDER] All frames transmitted — end signal sent
+2026-03-22 16:13:31,569 [SENDER] Connection closed — transmission complete
+2026-03-22 16:17:38,230 [SENDER] Starting sender — Device ID: CAM_DEVICE_01
+2026-03-22 16:17:38,231 [SENDER] Connecting to receiver at 127.0.0.1:9999...
+2026-03-22 16:17:52,515 [SENDER] Starting sender — Device ID: CAM_DEVICE_01
+2026-03-22 16:17:52,516 [SENDER] Connecting to receiver at 127.0.0.1:9999...
+2026-03-22 16:17:52,518 [SENDER] Connected to receiver at 127.0.0.1:9999
+2026-03-22 16:17:57,823 [SENDER] All frames transmitted — end signal sent
+2026-03-22 16:17:57,824 [SENDER] Connection closed — transmission complete
+2026-03-22 16:20:09,970 [SENDER] Starting sender — Device ID: CAM_DEVICE_01
+2026-03-22 16:20:09,972 [SENDER] Connecting to receiver at 127.0.0.1:9999...
+2026-03-22 16:20:30,205 [SENDER] Starting sender — Device ID: CAM_DEVICE_01
+2026-03-22 16:20:30,206 [SENDER] Connecting to receiver at 127.0.0.1:9999...
+2026-03-22 16:20:30,208 [SENDER] Connected to receiver at 127.0.0.1:9999
+2026-03-22 16:20:30,267 [SENDER] Frame 1 sent successfully -OK 
+2026-03-22 16:20:30,789 [SENDER] Frame 2 sent successfully -OK 
+2026-03-22 16:20:31,310 [SENDER] Frame 3 sent successfully -OK 
+2026-03-22 16:20:31,835 [SENDER] Frame 4 sent successfully -OK 
+2026-03-22 16:20:32,355 [SENDER] Frame 5 sent successfully -OK 
+2026-03-22 16:20:32,879 [SENDER] Frame 6 sent successfully -OK 
+2026-03-22 16:20:33,400 [SENDER] Frame 7 sent successfully -OK 
+2026-03-22 16:20:33,920 [SENDER] Frame 8 sent successfully -OK 
+2026-03-22 16:20:34,440 [SENDER] Frame 9 sent successfully -OK 
+2026-03-22 16:20:34,958 [SENDER] Frame 10 sent successfully -OK 
+2026-03-22 16:20:35,460 [SENDER] All frames transmitted — end signal sent
+2026-03-22 16:20:35,460 [SENDER] Connection closed — transmission complete
+2026-03-22 16:23:01,736 [SENDER] Starting sender - Device ID: CAM_DEVICE_01
+2026-03-22 16:23:01,736 [SENDER] Connecting to receiver at 127.0.0.1:9999...
+2026-03-22 16:23:01,738 [SENDER] Connected to receiver at 127.0.0.1:9999
+2026-03-22 16:23:01,766 [SENDER] Frame 1 encrypted - 307216 bytes
+2026-03-22 16:23:01,768 [SENDER] Frame 1 packet built - 307381 bytes total
+2026-03-22 16:23:01,770 [SENDER] Frame 1 sent successfully -OK 
+2026-03-22 16:23:02,274 [SENDER] Frame 2 encrypted - 307216 bytes
+2026-03-22 16:23:02,276 [SENDER] Frame 2 packet built - 307381 bytes total
+2026-03-22 16:23:02,278 [SENDER] Frame 2 sent successfully -OK 
+2026-03-22 16:23:02,782 [SENDER] Frame 3 encrypted - 307216 bytes
+2026-03-22 16:23:02,784 [SENDER] Frame 3 packet built - 307381 bytes total
+2026-03-22 16:23:02,785 [SENDER] Frame 3 sent successfully -OK 
+2026-03-22 16:23:03,288 [SENDER] Frame 4 encrypted - 307216 bytes
+2026-03-22 16:23:03,290 [SENDER] Frame 4 packet built - 307381 bytes total
+2026-03-22 16:23:03,291 [SENDER] Frame 4 sent successfully -OK 
+2026-03-22 16:23:03,794 [SENDER] Frame 5 encrypted - 307216 bytes
+2026-03-22 16:23:03,796 [SENDER] Frame 5 packet built - 307381 bytes total
+2026-03-22 16:23:03,797 [SENDER] Frame 5 sent successfully -OK 
+2026-03-22 16:23:04,301 [SENDER] Frame 6 encrypted - 307216 bytes
+2026-03-22 16:23:04,302 [SENDER] Frame 6 packet built - 307381 bytes total
+2026-03-22 16:23:04,304 [SENDER] Frame 6 sent successfully -OK 
+2026-03-22 16:23:04,807 [SENDER] Frame 7 encrypted - 307216 bytes
+2026-03-22 16:23:04,809 [SENDER] Frame 7 packet built - 307381 bytes total
+2026-03-22 16:23:04,811 [SENDER] Frame 7 sent successfully -OK 
+2026-03-22 16:23:05,315 [SENDER] Frame 8 encrypted - 307216 bytes
+2026-03-22 16:23:05,317 [SENDER] Frame 8 packet built - 307381 bytes total
+2026-03-22 16:23:05,318 [SENDER] Frame 8 sent successfully -OK 
+2026-03-22 16:23:05,822 [SENDER] Frame 9 encrypted - 307216 bytes
+2026-03-22 16:23:05,824 [SENDER] Frame 9 packet built - 307381 bytes total
+2026-03-22 16:23:05,826 [SENDER] Frame 9 sent successfully -OK 
+2026-03-22 16:23:06,328 [SENDER] Frame 10 encrypted - 307216 bytes
+2026-03-22 16:23:06,329 [SENDER] Frame 10 packet built - 307381 bytes total
+2026-03-22 16:23:06,330 [SENDER] Frame 10 sent successfully -OK 
+2026-03-22 16:23:06,832 [SENDER] All frames transmitted - end signal sent
+2026-03-22 16:23:06,833 [SENDER] Connection closed - transmission complete
