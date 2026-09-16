@@ -1,0 +1,9 @@
+{
+    "host": "127.0.0.1",
+    "port": 9999,
+    "aes_key": "01234567890123456789012345678901",
+    "hmac_key": "super-secret-hmac-key-for-demo",
+    "frame_count": 10,
+    "frame_delay": 0.5,
+    "sender_id": "CAM_DEVICE_01"
+}

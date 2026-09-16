@@ -1,19 +1,21 @@
 # config.py - Shared settings (port, host, keys)
-HOST = "127.0.0.1"       # Localhost (sender and receiver on same machine)
-PORT = 9999              # Port both sender and receiver will use
- 
-# ── Sender Identity ───────────────────────────────────────────────
-SENDER_ID = "CAM_DEVICE_01"   # Unique ID of the sending device
- 
-# ── Encryption Key (AES-256 = 32 bytes) ──────────────────────────
-AES_KEY = b"01234567890123456789012345678901"  # 32 bytes exactly
- 
-# ── HMAC Secret Key (for packet authentication) ───────────────────
-HMAC_KEY = b"super-secret-hmac-key-for-demo"
- 
-# ── Transmission Settings ─────────────────────────────────────────
-FRAME_COUNT = 10         # Number of frames the sender will transmit
-FRAME_DELAY = 0.5        # Seconds between each frame transmission
- 
-# ── Logging ───────────────────────────────────────────────────────
+# [IMPROVEMENT]: Moved hardcoded settings out of Python to a shared JSON file.
+import json
+import os
+from shared.jsonkey import JsonKeys
+
+_config_path = os.path.join(os.path.dirname(__file__), "config.json")
+with open(_config_path, "r") as f:
+    _cfg = json.load(f)
+
+HOST = _cfg[JsonKeys.HOST]
+PORT = _cfg[JsonKeys.PORT]
+SENDER_ID = _cfg[JsonKeys.SENDER_ID]
+
+# Encode keys to bytes as required by AES/HMAC algorithms
+AES_KEY = _cfg[JsonKeys.AES_KEY].encode("utf-8")
+HMAC_KEY = _cfg[JsonKeys.HMAC_KEY].encode("utf-8")
+
+FRAME_COUNT = _cfg[JsonKeys.FRAME_COUNT]
+FRAME_DELAY = _cfg[JsonKeys.FRAME_DELAY]
 LOG_FILE = "logs/receiver.log"

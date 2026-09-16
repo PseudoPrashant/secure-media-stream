@@ -57,34 +57,28 @@ HMAC_SIZE     = 32         # SHA256 produces 32 bytes
 
 def build_packet(
     frame_id: int,
-    sender_id: str,
+    metadata_bytes: bytes,
     nonce: bytes,
     ciphertext: bytes,
-    frame_shape: tuple,
     hmac_key: bytes
 ) -> bytes:
     """
     Assembles a complete packet from its components.
 
     Args:
-        frame_id    : sequential frame number
-        sender_id   : string ID of the sending device
-        nonce       : 12-byte AES GCM nonce
-        ciphertext  : encrypted frame bytes
-        frame_shape : (height, width) of the original frame
-        hmac_key    : secret key for HMAC signing
+        frame_id       : sequential frame number
+        metadata_bytes : pre-computed JSON metadata bytes
+        nonce          : 12-byte AES GCM nonce
+        ciphertext     : encrypted frame bytes
+        hmac_key       : secret key for HMAC signing
 
     Returns:
         packet      : complete byte string ready to send over the socket
     """
 
-    # ── 1. Build Metadata ─────────────────────────────────────────
-    metadata = json.dumps({
-        "sender_id"    : sender_id,
-        "frame_height" : frame_shape[0],
-        "frame_width"  : frame_shape[1],
-        "encoding"     : "numpy_uint8"
-    }).encode("utf-8")
+    # ── 1. Metadata ───────────────────────────────────────────────
+    # [IMPROVEMENT]: Reusing pre-computed JSON metadata_bytes saves CPU overhead.
+    metadata = metadata_bytes
 
     # ── 2. Build Payload (nonce + ciphertext joined together) ─────
     payload = nonce + ciphertext

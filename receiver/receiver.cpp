@@ -2,6 +2,7 @@
 // Accepts TCP connections, receives packets, validates and decrypts frames
 
 #include "validator.h"
+#include "nlohmann/json.hpp" // [IMPROVEMENT]: Include JSON library for dynamic config
 
 #include <iostream>
 #include <fstream>
@@ -19,19 +20,12 @@
 #pragma comment(lib, "ws2_32.lib")
 
 // ── Configuration ─────────────────────────────────────────────────
-// Must match shared/config.py exactly
-const std::string HOST        = "127.0.0.1";
-const int         PORT        = 9999;
-const std::string HMAC_KEY    = "super-secret-hmac-key-for-demo";
-const std::string LOG_FILE    = "logs/receiver.log";
-
-// AES key must be exactly 32 bytes — matches config.py
-const std::vector<uint8_t> AES_KEY = {
-    '0','1','2','3','4','5','6','7','8','9',
-    '0','1','2','3','4','5','6','7','8','9',
-    '0','1','2','3','4','5','6','7','8','9',
-    '0','1'
-};
+// [IMPROVEMENT]: Configuration variables are now dynamically loaded from config.json
+std::string HOST;
+int PORT;
+std::string HMAC_KEY;
+std::vector<uint8_t> AES_KEY;
+const std::string LOG_FILE = "logs/receiver.log";
 
 
 // ── Logging ───────────────────────────────────────────────────────
@@ -85,6 +79,13 @@ bool recv_packet(SOCKET sock, std::vector<uint8_t>& packet) {
 
     // Zero length means end of transmission signal
     if (length == 0) return false;
+
+    // [IMPROVEMENT]: Add MAX_PACKET_SIZE check to prevent OOM
+    const uint32_t MAX_PACKET_SIZE = 10 * 1024 * 1024; // 10 MB limit
+    if (length > MAX_PACKET_SIZE) {
+        log("ERROR: Received packet length exceeds MAX_PACKET_SIZE (" + std::to_string(length) + " bytes)");
+        return false;
+    }
 
     // Read exactly that many bytes
     return recv_exact(sock, packet, length);
@@ -149,6 +150,25 @@ int main() {
         std::cerr << "Warning: Could not open log file" << std::endl;
     }
 
+    // [IMPROVEMENT]: Load configuration dynamically from shared/config.json
+    try {
+        std::ifstream config_stream("../shared/config.json");
+        if (!config_stream.is_open()) {
+            log("ERROR: Could not open ../shared/config.json");
+            return 1;
+        }
+        nlohmann::json cfg = nlohmann::json::parse(config_stream);
+        HOST = cfg["host"].get<std::string>();
+        PORT = cfg["port"].get<int>();
+        HMAC_KEY = cfg["hmac_key"].get<std::string>();
+        
+        std::string aes_str = cfg["aes_key"].get<std::string>();
+        AES_KEY.assign(aes_str.begin(), aes_str.end());
+    } catch (const std::exception& e) {
+        log("ERROR: Failed to parse config.json: " + std::string(e.what()));
+        return 1;
+    }
+
     log("============================================");
     log("Secure Media Stream Receiver starting...");
     log("Listening on " + HOST + ":" + std::to_string(PORT));
@@ -187,42 +207,44 @@ int main() {
     }
 
     // ── Listen for Connections ────────────────────────────────────
-    listen(server_sock, 1);
-    log("Waiting for sender to connect...");
+    listen(server_sock, SOMAXCONN); // [IMPROVEMENT]: Changed from 1 to SOMAXCONN
 
-    // ── Accept Connection ─────────────────────────────────────────
-    sockaddr_in client_addr{};
-    int client_len = sizeof(client_addr);
-    SOCKET client_sock = accept(server_sock, (sockaddr*)&client_addr, &client_len);
+    // [IMPROVEMENT]: Loop to handle multiple connections successively
+    while (true) {
+        log("Waiting for sender to connect...");
 
-    if (client_sock == INVALID_SOCKET) {
-        log("ERROR: Accept failed");
-        closesocket(server_sock);
-        WSACleanup();
-        return 1;
+        sockaddr_in client_addr{};
+        int client_len = sizeof(client_addr);
+        SOCKET client_sock = accept(server_sock, (sockaddr*)&client_addr, &client_len);
+
+        if (client_sock == INVALID_SOCKET) {
+            log("ERROR: Accept failed");
+            break; // Exit the loop on critical accept error
+        }
+
+        char client_ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
+        log("Sender connected from " + std::string(client_ip));
+
+        // ── Receive and Process Packets ───────────────────────────────
+        int frame_count = 0;
+        std::vector<uint8_t> raw_packet;
+
+        while (recv_packet(client_sock, raw_packet)) {
+            frame_count++;
+            log("Packet received — " + std::to_string(raw_packet.size()) + " bytes");
+            process_packet(raw_packet);
+        }
+
+        // ── Transmission Complete ─────────────────────────────────────
+        log("============================================");
+        log("Transmission complete for " + std::string(client_ip) + " — " + std::to_string(frame_count) + " frames received");
+        log("============================================");
+
+        closesocket(client_sock);
     }
-
-    char client_ip[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
-    log("Sender connected from " + std::string(client_ip));
-
-    // ── Receive and Process Packets ───────────────────────────────
-    int frame_count = 0;
-    std::vector<uint8_t> raw_packet;
-
-    while (recv_packet(client_sock, raw_packet)) {
-        frame_count++;
-        log("Packet received — " + std::to_string(raw_packet.size()) + " bytes");
-        process_packet(raw_packet);
-    }
-
-    // ── Transmission Complete ─────────────────────────────────────
-    log("============================================");
-    log("Transmission complete — " + std::to_string(frame_count) + " frames received");
-    log("============================================");
 
     // ── Cleanup ───────────────────────────────────────────────────
-    closesocket(client_sock);
     closesocket(server_sock);
     WSACleanup();
     log_file.close();
